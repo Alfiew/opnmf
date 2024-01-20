@@ -123,6 +123,7 @@ class OPNMF(TransformerMixin, BaseEstimator):
 
     def transform(self, X):
         """Transform the data X according to the fitted OPNMF model.
+        Added functionality by Alfie Wearn 2024-01-20
 
         Parameters
         ----------
@@ -131,12 +132,10 @@ class OPNMF(TransformerMixin, BaseEstimator):
 
         Returns
         -------
-        W : ndarray of shape (n_samples, n_components)
+        H : ndarray of shape (n_components, n_features)
             Transformed data.
-            # NOT TRUE, GIVES H, GIVE A NEW SET OF SUBJECTS
-            # IN OTHER WORDS: as the OPNMF is: X~W*H, Given pre-calculated W and a new X, this calculates a new H
-        """
-        # Ensure the model is fitted
+            As the OPNMF is: X~W*H, this calculates a new H given pre-calculated W and a new X.
+        """        # Ensure the model is fitted
         check_is_fitted(self, 'components_')
 
         # Apply transformation to new subjects
