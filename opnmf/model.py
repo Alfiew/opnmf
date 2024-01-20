@@ -133,8 +133,23 @@ class OPNMF(TransformerMixin, BaseEstimator):
         -------
         W : ndarray of shape (n_samples, n_components)
             Transformed data.
+            # NOT TRUE, GIVES H, GIVE A NEW SET OF SUBJECTS
+            # IN OTHER WORDS: as the OPNMF is: X~W*H, Given pre-calculated W and a new X, this calculates a new H
         """
-        raise NotImplementedError("Don't know how to do this!")
+        # Ensure the model is fitted
+        check_is_fitted(self, 'components_')
+
+        # Apply transformation to new subjects
+        # Use the fixed W (self.coef_) learned during training to transform the new data
+        _, H, _ = opnmf(X, n_components=self.n_components_, W_fixed=self.coef_,
+                        max_iter=self.max_iter, tol=self.tol)
+                        
+        # Calculate the reconstruction
+        X_reconstructed = self.coef_ @ H
+        # Calculate MSE
+        mse = np.mean((X - X_reconstructed) ** 2)
+
+        return H, mse
 
     def mse(self):
         check_is_fitted(self)
